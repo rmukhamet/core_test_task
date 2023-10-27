@@ -1,0 +1,37 @@
+services:
+  auth-generator:
+    image: andrianovartemii/gm-test-task-auth-generator:latest
+    ports:
+      - "8082:8080"
+    environment:
+      AUTH_TOKEN_LIFETIME: 2
+  gateway:
+    build:
+      context: ..
+      dockerfile: ./deployments/gateway-dockerfile
+    ports:
+      - 8080:8080
+  storage:
+    build:
+      context: ..
+      dockerfile: ./deployments/storage-dockerfile
+    ports:
+      - 8081:8080
+  db:
+    image: postgres:15
+    volumes:
+      - db_data:/var/lib/postgresql
+    restart: always
+    environment:
+      POSTGRES_DB: "retailers"
+      POSTGRES_USER: "app"
+      POSTGRES_PASSWORD: "passpasspass"
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:7.2
+    restart: always
+    ports:
+      - '6379:6379'
+volumes:
+  db_data:

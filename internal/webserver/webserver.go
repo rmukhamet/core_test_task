@@ -10,11 +10,12 @@ import (
 )
 
 type WebServer struct {
-	server *fiber.App
-	port   string
+	server             *fiber.App
+	port               string
+	retailerController RetailerControllerI
 }
 
-func New(cfg *config.GatewayConfig) *WebServer {
+func New(cfg *config.GatewayConfig, retailerController RetailerControllerI) *WebServer {
 	app := fiber.New(fiber.Config{
 		Prefork:       false,
 		CaseSensitive: true,
@@ -24,8 +25,9 @@ func New(cfg *config.GatewayConfig) *WebServer {
 	})
 
 	ws := &WebServer{
-		server: app,
-		port:   cfg.HTTP.Port,
+		server:             app,
+		port:               cfg.HTTP.Port,
+		retailerController: retailerController,
 	}
 
 	ws.router()

@@ -14,6 +14,11 @@ type Retailer struct {
 	Version   Version
 }
 
+func (r Retailer) Validate() error {
+	// TODO
+	return nil
+}
+
 type Address struct {
 	City   string
 	Street string
@@ -26,6 +31,6 @@ type Person struct {
 }
 
 type Version struct {
-	Creator string
+	Actor   string
 	Version int
 }

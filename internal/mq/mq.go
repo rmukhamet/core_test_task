@@ -1,20 +1,53 @@
 package mq
 
-import "context"
+import (
+	"context"
+	"log"
+
+	"github.com/go-redis/redis"
+	"github.com/rmukhamet/core_test_task/internal/apperrors"
+	"github.com/rmukhamet/core_test_task/internal/config"
+	"github.com/rmukhamet/core_test_task/internal/model"
+)
 
 type MessageQueue struct {
+	channel string
+	client  *redis.Client
 }
 
-func New() *MessageQueue {
-	return &MessageQueue{}
+func New(cfg *config.GatewayConfig) *MessageQueue {
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     cfg.REDIS.Addr,
+		Password: cfg.REDIS.Password,
+		DB:       cfg.REDIS.DB,
+	})
+
+	return &MessageQueue{
+		channel: cfg.REDIS.Channel,
+		client:  redisClient,
+	}
 }
 
-func (mq *MessageQueue) Push(ctx context.Context, v interface{}) error {
-	return nil
+func (mq *MessageQueue) Ping(ctx context.Context) error {
+	pong, err := mq.client.Ping().Result()
+	log.Print(pong, err)
+
+	return err
+}
+func (mq *MessageQueue) Publish(ctx context.Context, v interface{}) error {
+	var data interface{}
+	switch v {
+	case v.(model.Retailer):
+		data = NewRetailer(v.(model.Retailer))
+	default:
+		return apperrors.ErrorUnknownDataToQueue
+	}
+
+	return mq.client.Publish(mq.channel, data).Err()
 }
 
-func (mq *MessageQueue) Pull(ctx context.Context, v interface{}) (<-chan retailer, error) {
-	ch := make(chan retailer)
+func (mq *MessageQueue) Subscribe(ctx context.Context, v interface{}) (<-chan Retailer, error) {
+	ch := make(chan Retailer)
 	return ch, nil
 }
 

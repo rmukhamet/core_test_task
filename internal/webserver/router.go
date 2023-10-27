@@ -8,5 +8,7 @@ func (ws *WebServer) router() {
 		return c.SendString("Hello, World!" + "id: " + c.Params("id"))
 	})
 
+	ws.server.Post("retailer", ws.create)
+
 	return
 }

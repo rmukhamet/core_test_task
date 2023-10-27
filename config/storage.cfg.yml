@@ -10,5 +10,7 @@ postgres:
   connect_url: "redis"
 
 redis:
-  queue: insert_Pipe
-  connect_url: "redis"
+  channel: tasks
+  address: "redis:6379"
+  password: ""
+  db: 1

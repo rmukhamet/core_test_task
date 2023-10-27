@@ -14,7 +14,7 @@ type WebServer struct {
 	port   string
 }
 
-func New(cfg *config.Config) *WebServer {
+func New(cfg *config.GatewayConfig) *WebServer {
 	app := fiber.New(fiber.Config{
 		Prefork:       false,
 		CaseSensitive: true,

@@ -5,10 +5,6 @@ app:
 http:
   port: '8080'
 
-postgres:
-  pool_max: 2
-  connect_url: "redis"
-
 redis:
   queue: insert_Pipe
   connect_url: "redis"

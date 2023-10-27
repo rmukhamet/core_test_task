@@ -1,0 +1,14 @@
+app:
+  name: 'storage-service'
+  version: '0.1.0'
+
+http:
+  port: '8080'
+
+postgres:
+  pool_max: 2
+  connect_url: "redis"
+
+redis:
+  queue: insert_Pipe
+  connect_url: "redis"

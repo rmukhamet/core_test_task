@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/rmukhamet/core_test_task/internal/gateway"
+	"github.com/rmukhamet/core_test_task/internal/storage"
 
 	"github.com/rmukhamet/core_test_task/internal/config"
 )
@@ -24,13 +24,13 @@ func main() {
 }
 
 func run() error {
-	cfg, err := config.New()
+	cfg, err := config.NewStorage()
 	if err != nil {
 		return fmt.Errorf("config error: %w", err)
 	}
 
 	log.SetPrefix("gateway")
-	app := gateway.New(cfg)
+	app := storage.New(cfg)
 
 	// listen to OS signals and gracefully shutdown
 	stopped := make(chan struct{})

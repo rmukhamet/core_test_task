@@ -24,7 +24,7 @@ func main() {
 }
 
 func run() error {
-	cfg, err := config.New()
+	cfg, err := config.NewGateway()
 	if err != nil {
 		return fmt.Errorf("config error: %w", err)
 	}
@@ -45,10 +45,6 @@ func run() error {
 		close(stopped)
 	}()
 
-	// err := app.Init()
-	// if err != nil {
-	// 	return fmt.Errorf("failed gateway init %w", err)
-	// }
 	err = app.Run()
 	if err != nil {
 		return fmt.Errorf("gateway error %w", err)

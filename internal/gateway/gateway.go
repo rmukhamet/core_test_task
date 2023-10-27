@@ -2,7 +2,6 @@ package gateway
 
 import (
 	"context"
-	"log"
 
 	"github.com/rmukhamet/core_test_task/internal/config"
 	"github.com/rmukhamet/core_test_task/internal/model"
@@ -13,15 +12,13 @@ type Gateway struct {
 	webserver *webserver.WebServer
 }
 
-func New(cfg *config.Config) *Gateway {
+func New(cfg *config.GatewayConfig) *Gateway {
 	ws := webserver.New(cfg)
 	return &Gateway{
 		webserver: ws,
 	}
 }
 func (gw *Gateway) Run() error {
-	log.Print("starting gateway service")
-
 	err := gw.webserver.Run()
 	if err != nil {
 		return err

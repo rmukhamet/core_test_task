@@ -8,10 +8,6 @@ import (
 	"github.com/rmukhamet/core_test_task/internal/model"
 )
 
-type Publisher interface {
-	Publish(ctx context.Context, v interface{}) error
-}
-
 type RetailerController struct {
 	mq Publisher
 }
@@ -30,5 +26,6 @@ func (rc *RetailerController) Update(ctx context.Context, retailer model.Retaile
 	if retailer.Version.Version == 0 {
 		return apperrors.ErrorWrongVersion
 	}
+	// TODO
 	return nil
 }

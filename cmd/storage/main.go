@@ -24,12 +24,12 @@ func main() {
 }
 
 func run() error {
+	ctx := context.Background()
 	cfg, err := config.NewStorage()
 	if err != nil {
 		return fmt.Errorf("config error: %w", err)
 	}
 
-	log.SetPrefix("gateway")
 	app := storage.New(cfg)
 
 	// listen to OS signals and gracefully shutdown
@@ -38,7 +38,7 @@ func run() error {
 		sigint := make(chan os.Signal, 1)
 		signal.Notify(sigint, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 		<-sigint
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 		defer cancel()
 		if err := app.Close(ctx); err != nil {
 			log.Printf("application shutdown error: %v", err)
@@ -46,7 +46,7 @@ func run() error {
 		close(stopped)
 	}()
 
-	err = app.Run()
+	err = app.Run(ctx)
 	if err != nil {
 		return fmt.Errorf("storage error %w", err)
 	}

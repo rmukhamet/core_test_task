@@ -55,7 +55,7 @@ func (ws *WebServer) update(c *fiber.Ctx) error {
 
 	retailer := retailerRequest.ToDTO()
 
-	// TODO Get Actor
+	// TODO Get Actor from jwt
 
 	err = retailer.Validate()
 	if err != nil {

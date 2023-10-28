@@ -15,8 +15,7 @@ type Gateway struct {
 }
 
 func New(cfg *config.GatewayConfig) *Gateway {
-
-	mq := mq.New(cfg)
+	mq := mq.New(&cfg.REDIS)
 	rc := controller.NewRetailerController(cfg, mq)
 
 	ws := webserver.New(cfg, rc)

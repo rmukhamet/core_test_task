@@ -2,6 +2,8 @@ package mq
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/go-redis/redis"
@@ -15,24 +17,26 @@ type MessageQueue struct {
 	client  *redis.Client
 }
 
-func New(cfg *config.GatewayConfig) *MessageQueue {
+func New(cfg *config.REDIS) *MessageQueue {
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     cfg.REDIS.Addr,
-		Password: cfg.REDIS.Password,
-		DB:       cfg.REDIS.DB,
+		Addr:     cfg.Addr,
+		Password: cfg.Password,
+		DB:       cfg.DB,
 	})
 
 	return &MessageQueue{
-		channel: cfg.REDIS.Channel,
+		channel: cfg.Channel,
 		client:  redisClient,
 	}
 }
 
-func (mq *MessageQueue) Ping(ctx context.Context) error {
-	pong, err := mq.client.Ping().Result()
-	log.Print(pong, err)
+func (mq *MessageQueue) ping(ctx context.Context) error {
+	_, err := mq.client.Ping().Result()
+	if err != nil {
+		return fmt.Errorf("error ping redis with error: %w", err)
+	}
 
-	return err
+	return nil
 }
 func (mq *MessageQueue) Publish(ctx context.Context, v interface{}) error {
 	var data interface{}
@@ -43,11 +47,43 @@ func (mq *MessageQueue) Publish(ctx context.Context, v interface{}) error {
 		return apperrors.ErrorUnknownDataToQueue
 	}
 
-	return mq.client.Publish(mq.channel, data).Err()
+	err := mq.client.Publish(mq.channel, data).Err()
+	if err != nil {
+		return fmt.Errorf("failed publish: %+v with error: %w", data, err)
+	}
+	// debug
+	log.Printf("published: %+v", data)
+
+	return err
 }
 
-func (mq *MessageQueue) Subscribe(ctx context.Context, v interface{}) (<-chan Retailer, error) {
-	ch := make(chan Retailer)
+func (mq *MessageQueue) Subscribe(ctx context.Context, v interface{}) (<-chan model.Retailer, error) {
+	pubsub := mq.client.Subscribe(mq.channel)
+	ch := make(chan model.Retailer)
+	defer close(ch)
+	defer pubsub.Close()
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				break
+			case msg := <-pubsub.Channel():
+				var retailer Retailer
+
+				err := json.Unmarshal([]byte(msg.Payload), &retailer)
+				if err != nil {
+					log.Printf("wrong message format: %s, error: %s\n", msg.Payload, err.Error())
+					continue
+				}
+
+				log.Print(retailer)
+
+				ch <- retailer.ToDTO()
+			}
+		}
+	}()
+
 	return ch, nil
 }
 

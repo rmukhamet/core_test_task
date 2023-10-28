@@ -45,9 +45,7 @@ type (
 
 func NewGateway() (*GatewayConfig, error) {
 	cfg := &GatewayConfig{}
-
 	err := cleanenv.ReadConfig("./config/gateway.cfg.yml", cfg)
-
 	log.Print(fmt.Errorf("config error: %w", err))
 
 	err = cleanenv.ReadEnv(cfg)
@@ -62,9 +60,7 @@ func NewStorage() (*StorageConfig, error) {
 	cfg := &StorageConfig{}
 
 	err := cleanenv.ReadConfig("./config/gateway.cfg.yml", cfg)
-	if err != nil {
-		return nil, fmt.Errorf("config error: %w", err)
-	}
+	log.Print(fmt.Errorf("config error: %w", err))
 
 	err = cleanenv.ReadEnv(cfg)
 	if err != nil {

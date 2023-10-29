@@ -36,8 +36,7 @@ services:
       APP_VERSION: "0.1.0"
       REDIS_CHANNEL: "tasks"
       REDIS_ADDRESS: "redis:6379"
-      PG_POOL_MAX: 2
-      PG_CONNECT_URL: "dsds"
+      PG_URL: "postgres://app:passpasspass@db:5432/retailers"
       GRPC_PORT: "8080"
 
   db:

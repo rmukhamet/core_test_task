@@ -1,0 +1,245 @@
+{
+	"info": {
+		"_postman_id": "0fd2a3e5-fd27-4784-aff4-e06f28c34fa8",
+		"name": "Core test task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "615259"
+	},
+	"item": [
+		{
+			"name": "auth generate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"token\", pm.response.text());",
+							"pm.collectionVariables.set(\"token\", pm.response.text());",
+							"// pm.test(\"response is ok\",  ()=>{",
+							"//    if( pm.response.to.have.status(200)){",
+							"// var jsonData = JSON.parse(responseBody);",
+							"",
+							"postman.setEnvironmentVariable(\"token\", pm.response.text());",
+							"// }",
+							"// })",
+							"// pm.test(\"Body matches string\", function () {",
+							"//     pm.expect(pm.response.text()).to.include(\"string_you_want_to_search\");",
+							"// });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{auth_server}}/generate?login=test_user",
+					"host": [
+						"{{auth_server}}"
+					],
+					"path": [
+						"generate"
+					],
+					"query": [
+						{
+							"key": "login",
+							"value": "test_user"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "validate",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{auth_server}}/validate",
+					"host": [
+						"{{auth_server}}"
+					],
+					"path": [
+						"validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create retailer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"ddd\",\n    \"address_city\": \"city\",\n    \"address_street\": \"street\",\n    \"address_house\": \"dump data\",\n    \"owner_first_name\": \"dump data\",\n    \"owner_last_name\": \"dump data\",\n    \"open_time\": \"2012-04-23T18:25:43.511Z\",\n    \"close_time\": \"2012-04-23T18:25:43.511Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{gateway_server}}/retailer",
+					"host": [
+						"{{gateway_server}}"
+					],
+					"path": [
+						"retailer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update retailer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{gateway_server}}/retailer",
+					"host": [
+						"{{gateway_server}}"
+					],
+					"path": [
+						"retailer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get retailer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{gateway_server}}/retailer/dsfsdfsd",
+					"host": [
+						"{{gateway_server}}"
+					],
+					"path": [
+						"retailer",
+						"dsfsdfsd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get version list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{gateway_server}}/retailer/id/version",
+					"host": [
+						"{{gateway_server}}"
+					],
+					"path": [
+						"retailer",
+						"id",
+						"version"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"token\", pm.response.text());",
+							"pm.collectionVariables.set(\"token\", pm.response.text());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"sdfs\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{gateway_server}}/login",
+					"host": [
+						"{{gateway_server}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "auth_server",
+			"value": "localhost:8082",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "gateway_server",
+			"value": "localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "storage_server",
+			"value": "localhost:8081",
+			"type": "string"
+		}
+	]
+}

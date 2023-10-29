@@ -8,7 +8,7 @@ import (
 	"github.com/rmukhamet/core_test_task/internal/controller"
 	"github.com/rmukhamet/core_test_task/internal/mq"
 	"github.com/rmukhamet/core_test_task/internal/postgres"
-	"github.com/rmukhamet/core_test_task/internal/repositary"
+	"github.com/rmukhamet/core_test_task/internal/repository"
 )
 
 type StorageControllerI interface {
@@ -22,7 +22,7 @@ type Storage struct {
 func New(cfg *config.StorageConfig) *Storage {
 	mq := mq.New(&cfg.REDIS)
 	pgConn := postgres.New(&cfg.PG)
-	repositary := repositary.New(pgConn)
+	repositary := repository.New(pgConn)
 	sc := controller.NewStorageController(cfg, mq, repositary)
 	return &Storage{
 		storageController: sc,
@@ -44,6 +44,5 @@ func (s *Storage) Init() error {
 }
 
 func (s *Storage) Close(ctx context.Context) error {
-
 	return nil
 }

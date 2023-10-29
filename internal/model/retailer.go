@@ -27,8 +27,10 @@ type (
 	}
 
 	Version struct {
-		Actor   string
-		Version int
+		Actor     string
+		Version   int
+		CreatedAt time.Time
+		UpdatedAt time.Time
 	}
 )
 

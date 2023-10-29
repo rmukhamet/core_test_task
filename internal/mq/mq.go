@@ -7,7 +7,6 @@ import (
 	"log"
 
 	"github.com/go-redis/redis"
-	"github.com/rmukhamet/core_test_task/internal/apperrors"
 	"github.com/rmukhamet/core_test_task/internal/config"
 	"github.com/rmukhamet/core_test_task/internal/model"
 )
@@ -30,56 +29,50 @@ func New(cfg *config.REDIS) *MessageQueue {
 	}
 }
 
-func (mq *MessageQueue) ping(ctx context.Context) error {
-	_, err := mq.client.Ping().Result()
+func (mq *MessageQueue) Publish(ctx context.Context, t model.Task) error {
+	task := NewTask(t)
+	err := mq.client.Publish(mq.channel, task).Err()
 	if err != nil {
-		return fmt.Errorf("error ping redis with error: %w", err)
+		return fmt.Errorf("failed publish: %+v with error: %w", t, err)
 	}
+	// debug
+	log.Printf("published: %+v", t)
 
 	return nil
 }
-func (mq *MessageQueue) Publish(ctx context.Context, v interface{}) error {
-	var data interface{}
-	switch v {
-	case v.(model.Retailer):
-		data = NewRetailer(v.(model.Retailer))
-	default:
-		return apperrors.ErrorUnknownDataToQueue
-	}
 
-	err := mq.client.Publish(mq.channel, data).Err()
-	if err != nil {
-		return fmt.Errorf("failed publish: %+v with error: %w", data, err)
-	}
-	// debug
-	log.Printf("published: %+v", data)
-
-	return err
-}
-
-func (mq *MessageQueue) Subscribe(ctx context.Context, v interface{}) (<-chan model.Retailer, error) {
+func (mq *MessageQueue) Subscribe(ctx context.Context) (<-chan model.Task, error) {
 	pubsub := mq.client.Subscribe(mq.channel)
-	ch := make(chan model.Retailer)
-	defer close(ch)
-	defer pubsub.Close()
+
+	ch := make(chan model.Task)
 
 	go func() {
+		defer close(ch)
+		defer pubsub.Close()
+
 		for {
 			select {
 			case <-ctx.Done():
+
 				break
 			case msg := <-pubsub.Channel():
-				var retailer Retailer
-
-				err := json.Unmarshal([]byte(msg.Payload), &retailer)
-				if err != nil {
-					log.Printf("wrong message format: %s, error: %s\n", msg.Payload, err.Error())
+				if msg == nil {
 					continue
 				}
 
-				log.Print(retailer)
+				var task Task
 
-				ch <- retailer.ToDTO()
+				log.Printf("DEBUG reseived msg: %+v\n", msg)
+
+				err := json.Unmarshal([]byte(msg.Payload), &task) //todo new func
+				if err != nil {
+					log.Printf("wrong queue message format: %s, error: %s\n", msg.Payload, err.Error())
+					continue
+				}
+
+				log.Print("DEBUG", task)
+
+				ch <- task.ToDTO()
 			}
 		}
 	}()
@@ -88,7 +81,5 @@ func (mq *MessageQueue) Subscribe(ctx context.Context, v interface{}) (<-chan mo
 }
 
 func (mq *MessageQueue) Close(ctx context.Context) error {
-	// close connection
-	// close channel
-	return nil
+	return mq.client.Close()
 }

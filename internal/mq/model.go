@@ -7,6 +7,11 @@ import (
 	"github.com/rmukhamet/core_test_task/internal/model"
 )
 
+type Task struct {
+	Type string          `json:"task_type"`
+	Data json.RawMessage `json:"data"`
+}
+
 type Retailer struct {
 	// constant fields
 	ID      string
@@ -19,10 +24,10 @@ type Retailer struct {
 	Version   Version
 }
 
-func (r Retailer) Validate() error {
-	// TODO
-	return nil
-}
+// func (r Retailer) Validate() error {
+// 	// TODO
+// 	return nil
+// }
 
 type Address struct {
 	City   string
@@ -40,41 +45,21 @@ type Version struct {
 	Version int
 }
 
-func NewRetailer(r model.Retailer) Retailer {
-	return Retailer{
-		Name:      r.Name,
-		Address:   Address(r.Address),
-		Owner:     Person(r.Owner),
-		OpenTime:  r.OpenTime,
-		CloseTime: r.CloseTime,
-		Version: Version{
-			Actor: r.Version.Actor,
-		},
+func NewTask(t model.Task) Task {
+	value, _ := json.Marshal(t.Data)
+	return Task{
+		Type: string(t.Type),
+		Data: value,
 	}
 }
-func (r Retailer) MarshalBinary() (data []byte, err error) {
-	bytes, err := json.Marshal(r)
+func (t Task) MarshalBinary() (data []byte, err error) {
+	bytes, err := json.Marshal(t)
 	return bytes, err
 }
 
-func (r Retailer) ToDTO() model.Retailer {
-	return model.Retailer{
-		Name: r.Name,
-		Address: model.Address{
-			City:   r.Address.City,
-			Street: r.Address.Street,
-			House:  r.Address.House,
-		},
-		Owner: model.Person{
-			FirstName: r.Owner.FirstName,
-			LastName:  r.Owner.LastName,
-		},
-		OpenTime:  r.OpenTime,
-		CloseTime: r.CloseTime,
-		Version: model.Version{
-			Actor:   r.Version.Actor,
-			Version: r.Version.Version,
-		},
+func (t Task) ToDTO() model.Task {
+	return model.Task{
+		Type: model.TaskType(t.Type),
+		Data: t.Data,
 	}
-
 }

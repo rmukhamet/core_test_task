@@ -9,6 +9,7 @@ import (
 type RetailerControllerI interface {
 	RetailerCreator
 	RetailerUpdator
+	RetailerGetter
 }
 
 type RetailerCreator interface {
@@ -20,7 +21,7 @@ type RetailerUpdator interface {
 }
 
 type RetailerGetter interface {
-	GetRetail(ctx context.Context, ID string) (model.Retailer, error)
+	GetRetailerByID(ctx context.Context, ID string) (model.Retailer, error)
 }
 
 type VersionLister interface {

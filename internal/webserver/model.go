@@ -7,17 +7,17 @@ import (
 )
 
 type RetailerCreateRequest struct {
-	Name          string
-	AddressCity   string
-	AddressStreet string
-	AddressHouse  string
+	Name          string `json:"name"`
+	AddressCity   string `json:"address_city"`
+	AddressStreet string `json:"address_street"`
+	AddressHouse  string `json:"address_house"`
 	// keep version
-	OwnerFirstName string
-	ownerLastName  string
-	OpenTime       time.Time
-	CloseTime      time.Time
+	OwnerFirstName string    `json:"owner_first_name"`
+	OwnerLastName  string    `json:"owner_last_name"`
+	OpenTime       time.Time `json:"open_time"`
+	CloseTime      time.Time `json:"close_time"`
 
-	Actor string
+	Actor string `json:"-"`
 }
 
 func (rcr *RetailerCreateRequest) ToDTO() model.Retailer {
@@ -30,7 +30,7 @@ func (rcr *RetailerCreateRequest) ToDTO() model.Retailer {
 		},
 		Owner: model.Person{
 			FirstName: rcr.OwnerFirstName,
-			LastName:  rcr.ownerLastName,
+			LastName:  rcr.OwnerLastName,
 		},
 		OpenTime:  rcr.OpenTime,
 		CloseTime: rcr.CloseTime,
@@ -65,11 +65,8 @@ func (rur *RetailerUpdateRequest) ToDTO() model.Retailer {
 	}
 }
 
-type RetailerGetRequest struct {
-	ID string
-}
-
 type RetailerGetResponse struct {
+	ID            string
 	Name          string
 	AddressCity   string
 	AddressStreet string
@@ -80,7 +77,30 @@ type RetailerGetResponse struct {
 	OpenTime       time.Time
 	CloseTime      time.Time
 
-	Version int
+	Version   int
+	Actor     string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+func NewRetailerGetResponse(r model.Retailer) RetailerGetResponse {
+	return RetailerGetResponse{
+		ID:            r.ID,
+		Name:          r.Name,
+		AddressCity:   r.Address.City,
+		AddressStreet: r.Address.Street,
+		AddressHouse:  r.Address.House,
+		// keep version
+		OwnerFirstName: r.Owner.FirstName,
+		ownerLastName:  r.Owner.LastName,
+		OpenTime:       r.OpenTime,
+		CloseTime:      r.CloseTime,
+
+		Version:   r.Version.Version,
+		Actor:     r.Version.Actor,
+		CreatedAt: r.Version.CreatedAt,
+		UpdatedAt: r.Version.UpdatedAt,
+	}
 }
 
 type RetailerGetVersionListRequest struct {

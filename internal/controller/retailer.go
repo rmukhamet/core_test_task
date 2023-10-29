@@ -19,13 +19,24 @@ func NewRetailerController(cfg *config.GatewayConfig, mq Publisher) *RetailerCon
 }
 
 func (rc *RetailerController) Create(ctx context.Context, retailer model.Retailer) error {
-	return rc.mq.Publish(ctx, retailer)
+	task := model.NewTask(model.TaskTypeCreate, retailer)
+	return rc.mq.Publish(ctx, task)
 }
 
 func (rc *RetailerController) Update(ctx context.Context, retailer model.Retailer) error {
 	if retailer.Version.Version == 0 {
 		return apperrors.ErrorWrongVersion
 	}
-	// TODO
-	return nil
+
+	if retailer.ID == "" {
+		return apperrors.ErrorRetailerIDRequired
+	}
+
+	task := model.NewTask(model.TaskTypeUpdate, retailer)
+	return rc.mq.Publish(ctx, task)
+}
+
+func (rc *RetailerController) GetRetailerByID(ctx context.Context, retailerID string) (model.Retailer, error) {
+
+	return model.Retailer{}, nil
 }

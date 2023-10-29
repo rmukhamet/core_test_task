@@ -11,6 +11,8 @@ services:
       dockerfile: ./deployments/gateway-dockerfile
     ports:
       - 8080:8080
+    links:
+     - redis
     environment:
       APP_NAME: "gateway-service"
       APP_VERSION: "0.1.0"
@@ -23,6 +25,9 @@ services:
       dockerfile: ./deployments/storage-dockerfile
     ports:
       - 8081:8080
+    links:
+     - redis
+     - db
     environment:
       APP_NAME: "storage-service"
       APP_VERSION: "0.1.0"
@@ -48,5 +53,7 @@ services:
     restart: always
     ports:
       - '6379:6379'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
 volumes:
   db_data:

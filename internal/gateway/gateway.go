@@ -2,9 +2,11 @@ package gateway
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/rmukhamet/core_test_task/internal/config"
-	"github.com/rmukhamet/core_test_task/internal/model"
+	"github.com/rmukhamet/core_test_task/internal/controller"
+	"github.com/rmukhamet/core_test_task/internal/mq"
 	"github.com/rmukhamet/core_test_task/internal/webserver"
 )
 
@@ -13,7 +15,10 @@ type Gateway struct {
 }
 
 func New(cfg *config.GatewayConfig) *Gateway {
-	ws := webserver.New(cfg)
+	mq := mq.New(&cfg.REDIS)
+	rc := controller.NewRetailerController(cfg, mq)
+
+	ws := webserver.New(cfg, rc)
 	return &Gateway{
 		webserver: ws,
 	}
@@ -21,7 +26,7 @@ func New(cfg *config.GatewayConfig) *Gateway {
 func (gw *Gateway) Run() error {
 	err := gw.webserver.Run()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed run webserver: %w", err)
 	}
 
 	return nil
@@ -30,28 +35,8 @@ func (gw *Gateway) Run() error {
 func (gw *Gateway) Close(ctx context.Context) error {
 	err := gw.webserver.Close(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed shutdown webserver: %w", err)
 	}
 
 	return nil
-}
-
-type RetailerCreator interface {
-	Create(ctx context.Context, retailer model.Retailer) error
-}
-
-type RetailerUpdator interface {
-	Update(ctx context.Context, retailer model.Retailer) error
-}
-
-type RetailerGetter interface {
-	GetRetail(ctx context.Context, ID string) (model.Retailer, error)
-}
-
-type VersionLister interface {
-	ListVersion(ctx context.Context, ID string) ([]model.Version, error)
-}
-
-type VersionGetter interface {
-	GetVersion(ctx context.Context, ID string, version int) (model.Version, error)
 }

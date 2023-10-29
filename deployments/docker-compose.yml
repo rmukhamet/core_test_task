@@ -11,12 +11,32 @@ services:
       dockerfile: ./deployments/gateway-dockerfile
     ports:
       - 8080:8080
+    links:
+     - redis
+    environment:
+      APP_NAME: "gateway-service"
+      APP_VERSION: "0.1.0"
+      HTTP_PORT: "8080"
+      REDIS_CHANNEL: "tasks"
+      REDIS_ADDRESS: "redis:6379"
   storage:
     build:
       context: ..
       dockerfile: ./deployments/storage-dockerfile
     ports:
       - 8081:8080
+    links:
+     - redis
+     - db
+    environment:
+      APP_NAME: "storage-service"
+      APP_VERSION: "0.1.0"
+      REDIS_CHANNEL: "tasks"
+      REDIS_ADDRESS: "redis:6379"
+      PG_POOL_MAX: 2
+      PG_CONNECT_URL: "dsds"
+      HTTP_PORT: "8081"
+
   db:
     image: postgres:15
     volumes:
@@ -33,5 +53,7 @@ services:
     restart: always
     ports:
       - '6379:6379'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
 volumes:
   db_data:

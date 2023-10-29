@@ -17,8 +17,10 @@ func (ws *WebServer) create(c *fiber.Ctx) error {
 
 	err := c.BodyParser(retailerRequest)
 	if err != nil {
-		log.Print(fmt.Errorf("failed parse json: %+v, with error: %w", string(c.BodyRaw()), err))
+		log.Print(fmt.Errorf("failed parse json: %+v, with error: %w", string(c.BodyRaw()), err).Error())
 		c.Status(fiber.StatusBadRequest)
+
+		return err
 	}
 
 	retailer := retailerRequest.ToDTO()
@@ -27,14 +29,18 @@ func (ws *WebServer) create(c *fiber.Ctx) error {
 
 	err = retailer.Validate()
 	if err != nil {
-		log.Print(fmt.Errorf("retailer %v not valid: %w", retailer, err))
+		log.Print(fmt.Errorf("retailer %v not valid: %w", retailer, err).Error())
 		c.Status(fiber.StatusBadRequest).SendString(apperrors.ErrorRetailerNotValid.Error())
+
+		return err
 	}
 
 	err = ws.retailerController.Create(c.Context(), retailer)
 	if err != nil {
-		log.Print(fmt.Errorf("failed queue with error: %w", err))
+		log.Print(fmt.Errorf("failed create retailer error: %w", err))
 		c.Status(fiber.StatusInternalServerError)
+
+		return err
 	}
 
 	c.Status(fiber.StatusAccepted)
@@ -56,6 +62,8 @@ func (ws *WebServer) update(c *fiber.Ctx) error {
 	if err != nil {
 		log.Print(fmt.Errorf("failed parse json: %+v, with error: %w", string(c.BodyRaw()), err))
 		c.Status(fiber.StatusBadRequest)
+
+		return err
 	}
 
 	retailer := retailerRequest.ToDTO()
@@ -66,33 +74,19 @@ func (ws *WebServer) update(c *fiber.Ctx) error {
 	if err != nil {
 		log.Print(fmt.Errorf("retailer %v not valid: %w", retailer, err))
 		c.Status(fiber.StatusBadRequest).SendString(apperrors.ErrorRetailerNotValid.Error())
+
+		return err
 	}
 
 	err = ws.retailerController.Update(c.Context(), retailer)
 	if err != nil {
-		log.Print(fmt.Errorf("failed queue with error: %w", err))
+		log.Print(fmt.Errorf("failed update retailer with error: %w", err).Error())
 		c.Status(fiber.StatusInternalServerError)
+
+		return err
 	}
 
 	c.Status(fiber.StatusAccepted)
-
-	return nil
-}
-
-func (ws *WebServer) getRetailerByID(c *fiber.Ctx) error {
-	c.Accepts("application/json")
-	c.AcceptsCharsets("utf-8")
-
-	retailerID := c.Params("id")
-
-	retailer, err := ws.retailerController.GetRetailerByID(c.Context(), retailerID)
-	if err != nil {
-		log.Print(fmt.Errorf("failed get retailer by ID %s with error: %w", retailerID, err))
-		c.Status(fiber.StatusInternalServerError)
-	}
-
-	retailerGetResponse := NewRetailerGetResponse(retailer)
-	c.Status(fiber.StatusOK).JSON(retailerGetResponse)
 
 	return nil
 }

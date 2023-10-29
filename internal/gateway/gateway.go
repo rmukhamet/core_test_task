@@ -6,6 +6,7 @@ import (
 
 	"github.com/rmukhamet/core_test_task/internal/config"
 	"github.com/rmukhamet/core_test_task/internal/controller"
+	"github.com/rmukhamet/core_test_task/internal/grpcclient"
 	"github.com/rmukhamet/core_test_task/internal/mq"
 	"github.com/rmukhamet/core_test_task/internal/webserver"
 )
@@ -16,7 +17,9 @@ type Gateway struct {
 
 func New(cfg *config.GatewayConfig) *Gateway {
 	mq := mq.New(&cfg.REDIS)
-	rc := controller.NewRetailerController(cfg, mq)
+	grpcClient := grpcclient.New(&cfg.GRPC)
+
+	rc := controller.NewRetailerController(cfg, mq, grpcClient)
 
 	ws := webserver.New(cfg, rc)
 	return &Gateway{

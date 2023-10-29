@@ -26,18 +26,22 @@ func (r *Repository) Create(ctx context.Context, retailer model.Retailer) error 
 func (r *Repository) Update(ctx context.Context, retailer model.Retailer) error {
 	return nil //todo
 }
-
+func (r *Repository) GetRetailerList(ctx context.Context) ([]model.Retailer, error) {
+	return nil, nil
+}
 func (r *Repository) GetRetailerByID(ctx context.Context, ID string) (model.Retailer, error) {
 	//select id, max(modstamp) from test where modstamp <= <ref_time> and (del_modstamp is null || del_modstamp <= <ref_time>) group by id;
 
-	return model.Retailer{}, nil
+	return model.Retailer{
+		ID: "sfsfsfsfsfsdfdsfsfs",
+	}, nil
 }
 
 func (r *Repository) DeleteRetailer(ctx context.Context, ID string) error {
 	return nil
 }
 
-func (r *Repository) DeleteVersion(ctx context.Context, ID string, version int) error {
+func (r *Repository) DeleteRetailerVersion(ctx context.Context, ID string, version int) error {
 	return nil
 }
 

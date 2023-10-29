@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package storage;
+import "google/protobuf/timestamp.proto";
+option go_package = "github.com/rmukhamet/core_test_task/api/storage;storage";
+
+service Storage {
+  rpc GetRetailerList(Empty) returns (Retailers) {}
+  rpc GetRetailerByID (RetailerID) returns (Retailer) {}
+  rpc DeleteRetailer(RetailerID) returns (Empty) {}
+	rpc DeleteRetailerVersion(RetailerIDVersionID) returns (Empty) {}
+	rpc History(RetailerID) returns (Retailers) {}
+	rpc GetRetailerVersion(RetailerIDVersionID) returns (Retailer) {}
+}
+message Empty {}
+
+message RetailerID {
+  string ID = 1;
+}
+
+message RetailerIDVersionID {
+  string RetailerID = 1;
+  int64 VersionID = 2;
+}
+
+message Retailer {
+  string ID = 1;
+  string Name = 2;
+	string AddressCity = 3;
+  string AddressStreet = 4;
+  string AddressHouse = 5;
+  string OwnerFirstName = 6;
+  string OwnerLastName = 7;
+  google.protobuf.Timestamp OpenTime = 8;
+  google.protobuf.Timestamp CloseTime = 9;
+  int64 Version = 10;
+  string Actor = 11;
+  google.protobuf.Timestamp CreatedAt = 12;
+  google.protobuf.Timestamp UpdatedAt = 13;
+}
+
+message Retailers {
+    repeated Retailer items = 1;
+}

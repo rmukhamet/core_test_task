@@ -7,4 +7,5 @@ var (
 	ErrorRetailerNotValid   = fmt.Errorf("error retailer not valid")
 	ErrorUnknownDataToQueue = fmt.Errorf("error unknown data to queue")
 	ErrorRetailerIDRequired = fmt.Errorf("error retailer id field required")
+	ErrorEntityNotFound     = fmt.Errorf("error entity not found")
 )

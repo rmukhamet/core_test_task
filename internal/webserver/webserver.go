@@ -13,6 +13,7 @@ type WebServer struct {
 	server             *fiber.App
 	port               string
 	retailerController RetailerControllerI
+	AuthURL            string
 }
 
 func New(cfg *config.GatewayConfig, retailerController RetailerControllerI) *WebServer {
@@ -28,6 +29,7 @@ func New(cfg *config.GatewayConfig, retailerController RetailerControllerI) *Web
 		server:             app,
 		port:               cfg.HTTP.Port,
 		retailerController: retailerController,
+		AuthURL:            cfg.AuthURL,
 	}
 
 	ws.router()

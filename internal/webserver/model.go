@@ -40,7 +40,8 @@ func (rcr *RetailerCreateRequest) ToDTO() model.Retailer {
 	}
 }
 
-type RetailerUpdateRequest struct {
+type RetailerUpdateRequest struct { //todo json tags
+	ID             string
 	OwnerFirstName string
 	ownerLastName  string
 	OpenTime       time.Time
@@ -52,6 +53,7 @@ type RetailerUpdateRequest struct {
 
 func (rur *RetailerUpdateRequest) ToDTO() model.Retailer {
 	return model.Retailer{
+		ID: rur.ID,
 		Owner: model.Person{
 			FirstName: rur.OwnerFirstName,
 			LastName:  rur.ownerLastName,
@@ -65,7 +67,7 @@ func (rur *RetailerUpdateRequest) ToDTO() model.Retailer {
 	}
 }
 
-type RetailerGetResponse struct {
+type RetailerResponse struct { //todo json tags
 	ID            string
 	Name          string
 	AddressCity   string
@@ -82,9 +84,15 @@ type RetailerGetResponse struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+type Version struct { //todo json tags
+	Version   int
+	Actor     string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
 
-func NewRetailerGetResponse(r model.Retailer) RetailerGetResponse {
-	return RetailerGetResponse{
+func NewRetailerResponse(r model.Retailer) RetailerResponse {
+	return RetailerResponse{
 		ID:            r.ID,
 		Name:          r.Name,
 		AddressCity:   r.Address.City,
@@ -103,14 +111,40 @@ func NewRetailerGetResponse(r model.Retailer) RetailerGetResponse {
 	}
 }
 
-type RetailerGetVersionListRequest struct {
-	ID string
-}
-type RetailerGetVersionListResponse struct {
-	Versions []Version
+type RetailerVersionListResponse struct {
+	Items []Version `json:"items"`
 }
 
-type Version struct {
-	Creator string
-	Version int
+func NewRetalerVersionListResponse(versions []model.Version) RetailerVersionListResponse {
+	versionsResp := make([]Version, 0, len(versions))
+
+	for _, v := range versions {
+		versionsResp = append(versionsResp,
+			Version{
+				Version:   v.Version,
+				Actor:     v.Actor,
+				CreatedAt: v.CreatedAt,
+				UpdatedAt: v.UpdatedAt,
+			})
+	}
+
+	return RetailerVersionListResponse{
+		Items: versionsResp,
+	}
+}
+
+type RetailerListResponse struct {
+	Items []RetailerResponse `json:"items"`
+}
+
+func NewRetalerListResponse(retailers []model.Retailer) RetailerListResponse {
+	retailersResp := make([]RetailerResponse, 0, len(retailers))
+
+	for _, r := range retailers {
+		retailersResp = append(retailersResp, NewRetailerResponse(r))
+	}
+
+	return RetailerListResponse{
+		Items: retailersResp,
+	}
 }

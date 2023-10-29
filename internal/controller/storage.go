@@ -22,6 +22,8 @@ func NewStorageController(cfg *config.StorageConfig, mq Subscriber, repo Reposit
 	}
 }
 
+// todo invert injection
+// need to inject controller to mq
 func (sc StorageController) Save(ctx context.Context) error {
 	log.Print("subscribing")
 	retailerCh, err := sc.mq.Subscribe(ctx)

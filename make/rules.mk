@@ -1,6 +1,8 @@
 .PHONY: generate
 generate:
-	echo "generage grpc proto"
+	protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    api/storage/storage.proto
 .PHONY: build
 build: generate
 	docker-compose --file ./deployments/docker-compose.yml build 

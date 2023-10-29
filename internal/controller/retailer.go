@@ -10,11 +10,13 @@ import (
 
 type RetailerController struct {
 	mq Publisher
+	tr TransportI
 }
 
-func NewRetailerController(cfg *config.GatewayConfig, mq Publisher) *RetailerController {
+func NewRetailerController(cfg *config.GatewayConfig, mq Publisher, tr TransportI) *RetailerController {
 	return &RetailerController{
 		mq: mq,
+		tr: tr,
 	}
 }
 
@@ -39,4 +41,24 @@ func (rc *RetailerController) Update(ctx context.Context, retailer model.Retaile
 func (rc *RetailerController) GetRetailerByID(ctx context.Context, retailerID string) (model.Retailer, error) {
 
 	return model.Retailer{}, nil
+}
+
+func (rc *RetailerController) GetRetailerList(ctx context.Context) ([]model.Retailer, error) {
+	return nil, nil
+}
+
+func (rc *RetailerController) DeleteRetailer(ctx context.Context, retailerID string) error {
+	return nil
+}
+
+func (rc *RetailerController) GetRetailerVersionList(ctx context.Context, retailerID string) ([]model.Version, error) {
+	return nil, nil
+}
+
+func (rc *RetailerController) GetRetailerVersion(ctx context.Context, retailerID string, versionID int) (model.Retailer, error) {
+	return model.Retailer{}, nil
+}
+
+func (rc *RetailerController) DeleteRetailerVersion(ctx context.Context, retailerID string, versionID int) error {
+	return nil
 }

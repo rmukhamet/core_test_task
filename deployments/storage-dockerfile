@@ -35,6 +35,8 @@ WORKDIR /app
 # Copy only the necessary files from the builder stage
 COPY --from=builder /app/app .
 
+# Copy migrations
+COPY ./migrations /app/migrations
 # Set any environment variables required by the application
 ENV HTTP_ADDR=:8080
 

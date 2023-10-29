@@ -46,6 +46,7 @@ func (r *Repository) Update(ctx context.Context, retailer model.Retailer) error 
 	return nil //todo
 }
 func (r *Repository) GetRetailerList(ctx context.Context) ([]model.Retailer, error) {
+	log.Print("get retailer list")
 	rows, err := r.conn.Queryx(listRetailer)
 	if err != nil {
 		return nil, nil

@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS retailer(
     version integer,
     actor VARCHAR(255),
     created_at timestamp,
-    updated_at timestamp NULLABLE,
-    deleted_at timestamp NULLABLE,
+    updated_at timestamp NULL,
+    deleted_at timestamp NULL
 );

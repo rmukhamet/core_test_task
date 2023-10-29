@@ -36,8 +36,6 @@ func New(cfg *config.StorageConfig) *Storage {
 		log.Fatal(err)
 	}
 
-	defer pgConn.Close()
-
 	repository := repository.New(pgConn)
 	sc := controller.NewStorageController(cfg, mq, repository)
 
@@ -59,6 +57,7 @@ func (s *Storage) Run(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("error grpc run with error: %w", err)
 	}
+
 	return nil
 }
 
@@ -100,7 +99,7 @@ func (s *Storage) Init(cfg *config.StorageConfig) error {
 	}
 
 	log.Printf("Migrate: up success")
-	//db migrate
+
 	return nil
 }
 

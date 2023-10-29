@@ -1,10 +1,10 @@
 package repository
 
 var (
-	listRetailer string = `select id, name, address_city,address_street,address_house,owner_first_name,owner_last_name,open_time,close_time,created_at,actor max(version) 
+	listRetailer string = `select id, name, address_city,address_street,address_house,owner_first_name,owner_last_name,open_time,close_time,created_at,actor, max(version) 
 	from retailer 
-	where deleted_at is not null 
-	order by id`
+	where deleted_at is null 
+	group by id`
 	createRetailer string = `INSERT INTO retailer (id, name, address_city, address_street, address_house, owner_first_name, owner_last_name, open_time, close_time, created_at, actor) 
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
 

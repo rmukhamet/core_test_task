@@ -50,7 +50,7 @@ func (rc *RetailerController) GetRetailerByID(ctx context.Context, retailerID st
 }
 
 func (rc *RetailerController) GetRetailerList(ctx context.Context) ([]model.Retailer, error) {
-	return nil, nil
+	return rc.tr.GetRetailerList(ctx)
 }
 
 func (rc *RetailerController) DeleteRetailer(ctx context.Context, retailerID string) error {

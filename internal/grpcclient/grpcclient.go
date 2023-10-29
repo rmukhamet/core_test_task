@@ -38,7 +38,7 @@ func (c *GRPCClient) Close(_ context.Context) error {
 	return c.conn.Close()
 }
 func (c *GRPCClient) GetRetailerList(ctx context.Context) ([]model.Retailer, error) {
-	retailers, err := c.client.GetRetailerList(ctx, nil)
+	retailers, err := c.client.GetRetailerList(ctx, &pb.Empty{})
 	if err != nil {
 		return nil, err
 	}

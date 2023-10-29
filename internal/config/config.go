@@ -40,8 +40,7 @@ type (
 	}
 
 	PG struct {
-		PoolMax int    `env-required:"true" yaml:"pool_max" env:"PG_POOL_MAX"`
-		URL     string `env-required:"true" yaml:"connect_url" env:"PG_CONNECT_URL"`
+		URL string `env-required:"true" yaml:"connect_url" env:"PG_URL"`
 	}
 
 	GRPC struct {

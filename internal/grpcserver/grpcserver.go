@@ -62,6 +62,7 @@ func (gs *GRPCService) Close(_ context.Context) error {
 	return nil
 }
 func (gs *GRPCService) GetRetailerList(ctx context.Context, _ *pb.Empty) (*pb.Retailers, error) {
+	log.Print("grpc server get retailes list")
 	retailers, err := gs.repo.GetRetailerList(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed get from db: %w", err)

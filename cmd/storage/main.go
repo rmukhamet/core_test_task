@@ -31,7 +31,7 @@ func run() error {
 	}
 
 	app := storage.New(cfg)
-
+	app.Init(cfg)
 	// listen to OS signals and gracefully shutdown
 	stopped := make(chan struct{})
 	go func() {

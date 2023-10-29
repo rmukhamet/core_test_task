@@ -2,6 +2,9 @@ package controller
 
 import (
 	"context"
+	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/rmukhamet/core_test_task/internal/apperrors"
 	"github.com/rmukhamet/core_test_task/internal/config"
@@ -21,6 +24,9 @@ func NewRetailerController(cfg *config.GatewayConfig, mq Publisher, tr Transport
 }
 
 func (rc *RetailerController) Create(ctx context.Context, retailer model.Retailer) error {
+	retailer.ID = uuid.New().String()
+	retailer.Version.CreatedAt = time.Now()
+
 	task := model.NewTask(model.TaskTypeCreate, retailer)
 	return rc.mq.Publish(ctx, task)
 }
@@ -44,7 +50,7 @@ func (rc *RetailerController) GetRetailerByID(ctx context.Context, retailerID st
 }
 
 func (rc *RetailerController) GetRetailerList(ctx context.Context) ([]model.Retailer, error) {
-	return nil, nil
+	return rc.tr.GetRetailerList(ctx)
 }
 
 func (rc *RetailerController) DeleteRetailer(ctx context.Context, retailerID string) error {
